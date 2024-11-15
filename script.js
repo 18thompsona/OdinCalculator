@@ -22,16 +22,16 @@ operators.forEach((op) =>{
 
 
 dot.addEventListener("click", ()=>{
-    
+    displayNumbers('.');
 });
 
 absoluteValue.addEventListener("click", ()=>{
-    
+    output.textContent = output.textContent*-1;
 });
 
 equal.addEventListener("click", ()=>{
-   output.textContent = String(operate(firstInput, operand, secondInput));
-   firstInput = output.textContent*1;
+    secondInput = output.textContent*1;
+    calculate(firstInput, operand, secondInput);
 });
 
 clear.addEventListener("click", ()=>{
@@ -39,16 +39,23 @@ clear.addEventListener("click", ()=>{
 });
 
 let firstInput = 0;
-let secondInput = 1;
+let secondInput = 0;
 let operand = '';
 let flag = false;
+let dotflag = false;
 
 function add(a, b) {return (a*1)+(b*1);}
 function subtract(a, b) {return (a*1)-(b*1);}
 function multiply(a, b) {return (a*1)*(b*1);}
 function divide(a, b) {return (a*1)/(b*1);}
 
-
+function calculate(input1, op, input2)
+{
+    output.textContent = String(operate(input1, op, input2));
+    firstInput = output.textContent*1;
+    secondInput = 0;
+    operand = "";
+}
 
 function operate(input1, operator, input2){
     switch (operator) {
@@ -59,15 +66,28 @@ function operate(input1, operator, input2){
         case '*':
             return multiply(input1, input2);
         case '/':
-            return divide(input1, input2);
+            return (secondInput !== 0) ? divide(input1, input2) : "Error, Can't divide by 0";
         default:
-            break;
+            return output.textContent
     }
 }
 
 function displayNumbers(digit){
+    if(flag === true)
+    {
+        output.textContent = '0';
+        flag = false;
+    }
+
     if(output.textContent === '0'){
-        output.textContent = String(digit);
+        if(digit === '.' && dotflag === false)
+        {
+            output.textContent = output.textContent + String(digit);
+            dotflag = true;
+        }
+        else{
+            output.textContent = String(digit);
+        }
     }
     else{
         output.textContent = output.textContent + String(digit);
@@ -75,14 +95,24 @@ function displayNumbers(digit){
 }
 
 function setOperator(op){
+    if(operand !== "" && firstInput != 0)
+    {
+        secondInput = output.textContent*1;
+        firstInput = operate(firstInput, operand, secondInput);
+        secondInput = 0;
+    }
+    else{
+        firstInput = output.textContent*1;
+    }
     operand = op;
-    firstInput = output.textContent;
+    dotflag = false;
+    flag = true;
 }
 
 function clearCalculator(){
     firstInput = 0;
     secondInput = 0;
-    operand = ''
+    operand = '';
     output.textContent = '0';
 }
 
